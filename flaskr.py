@@ -55,9 +55,18 @@ def close_db(error):
 @app.route('/')
 def show_entries():
     db = get_db()
-    cur = db.execute('select title, text from entries order by id desc')
+    cur = db.execute('select title, text from entries order by id desc limit 1')
     entries = cur.fetchall()
     return render_template('show_entries.html', entries=entries)
+'''
+You cannot use an aggregate function like MAX() like this in the selection.
+Instead consider the following:
+    ORDER BY unixtime DESC to sort the results matching your selection with the
+    newest first.
+    LIMIT 1 to only return the first result i.e. the newest.
+'''
+
+
 
 @app.route('/add', methods=['POST'])
 def add_entry():
